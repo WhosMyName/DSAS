@@ -13,11 +13,17 @@ Use at your own Risk!
 TODO:
 
 Compile on Windows
+
 Create a 15 and 20 Minutes Version
+
 Create a "I-am-the-Master-of-Time-DIY"-Version
+
 Die
+
 Try again
+
 Die
+
 ...
 Beat Dark Souls
-Praise the Sun! \[T]/
+Praise the Sun! \\\[T]/
