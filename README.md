@@ -9,12 +9,14 @@ I actually don't know now big a Savefile can get but from my 2 Chars, a 4 MB Sav
 So keep if safe, don't play too long and quit DSAS, to prevent your Harddrive from suffering a horrible Death.
 
 DISCLAIMER:
+
 I do not take responsibillity for any Data Loss!
 
 I do not take responsibillity for any Damages caused by this or any other Software.
 
 Use at your own Risk!
 
+<-------------------------------------------------------------->
 
 TODO:
 
