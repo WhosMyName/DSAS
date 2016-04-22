@@ -8,7 +8,7 @@ I actually don't know now big a Savefile can get but from my 2 Chars, a 4 MB Sav
 
 So keep if safe, don't play too long and quit DSAS, to prevent your Harddrive from suffering a horrible Death.
 
-A big shout out to my bois and grills from Microsoft, why am I not able to use colon(:) to properly display the Time inside of the Filename, in the Worlds greatest OS, according to Microsoft. *\*sighs\**
+A big shout out to my bois and grills from Microsoft, why am I not able to use colon(:) to properly display the Time inside of the Filename, in the Worlds greatest OS, according to Microsoft. _\*sighs\*_
 
 
 DISCLAIMER:
