@@ -21,7 +21,7 @@ Use at your own Risk!
 
 <-------------------------------------------------------------->
 
-## Just download the DSAS.zip, extract it into a subfolder of your "Users"-Folder and you should be good to go! 
+####Just download the DSAS.zip, extract it into a subfolder of your "Users"-Folder and you should be good to go! 
 
 
 ###Searching for Testers, please leave feedback!
