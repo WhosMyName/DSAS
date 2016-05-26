@@ -1,4 +1,5 @@
-/*//Dark Sous Auto Save - DSAS
+/*
+Dark Sous Auto Save - DSASv0.5.2 Hotfix 2
 
 Implement Auto Name Search
 Implement Time Retrieval
@@ -7,7 +8,7 @@ Implement Copying
 Implement Renaming
 Implement Exiting
 
-Check for Stored Path and determine Name or
+All Done!
 */
 
 #include <stdio.h>
@@ -41,6 +42,7 @@ path Month;
 string year;
 string month;
 string timestamp;
+string dsname = "DRAKS0005.sl2";
 
 int mint; //Minutes to compare
 int premint; //Minutes to compare
@@ -142,13 +144,22 @@ void showvecs(){ //Optional
 	}
 	cout << "<------------------------X------------------------------->" << endl << endl;
 }
+
+//................................................................................................\\
+
+void clearvecs(){
+
+	v.erase(v.begin(), v.end());
+	w.erase(w.begin(), w.end());
+}
+
 //................................................................................................\\
 
 void hitandrun(){
 
 	cout << "It has begun!" << endl << endl;
 
-	for (vec::iterator it (v.begin()); it != v.end(); ++it){
+	for (vec::iterator it (v.begin()); it != v.end(); ++it){		
 
 		path Sourcefile = (*it);
 		stringstream ss3;
@@ -165,7 +176,6 @@ void hitandrun(){
 		size_t found = renamed.str().find_last_of(".");
 		cout << "Found equals: " << found << endl << endl;
 		stringstream pre;
-		//stringstream ext;
 		pre << renamed.str().substr(0, found) << " - " << timestamp << renamed.str().substr(found);
 
 		path Renomnom = pre.str();
@@ -178,7 +188,7 @@ void hitandrun(){
 	w.erase(w.begin(), w.end());
 }
 
-void timegate(){// gets the minutes and uses them for comparison to sync the saves in a 10 minute cycle
+void timegate(){// gets the minutes and uses them for comparison to sync the saves in a X minute cycle
 	stringstream minutes;
 	time_facet *facetminutes = new time_facet("%M");
 	minutes.imbue(locale(minutes.getloc(), facetminutes));
@@ -205,20 +215,21 @@ int main(){
         cout << "Other" << endl;
     }
 
-    
+    clearvecs();
 	getDir(OriginalPath);
 	checkexist(FinalPath);
 	makemain();
 	checkexist(MainDir);
-	timegate();
-	premint = mint;
+	timegate(); //gets current Time-Value Minutes
+	premint = mint; //Inits the Swap Values
 	gettime();
 	createstorage(Year);
 	createstorage(Month);
+	showvecs();
 	hitandrun();
 	maxlimit++;
 
-	while(maxlimit <= 100){
+	while(maxlimit <= 100){ //Starts a 3 Variables Swap with Time Comparison and Management
 		timegate();
 		if(premint + 10 >= 60){
 			premint = premint - 50;
@@ -232,13 +243,15 @@ int main(){
 			hitandrun();
 			maxlimit++;
 		}
-		this_thread::sleep(seconds(10));
+		boost::this_thread::sleep(seconds(10));
 	}
 
 
 	return 0;
 
-
+	//Reduce Amount of Namespaces and use Scopes ::
+	//Comment better and more
+	//Add Multi-Threading for User-based Exiting
 	//Create optimized Copys for DSII and DS3 - GG
 
 
@@ -263,6 +276,13 @@ void checkexist(path p){
 
 				for (vec::iterator it (v.begin()); it != v.end(); ++it){ //Iteration cycles through Vector V
 					if (is_directory(*it)){
+						it = v.erase(it);
+						it--;
+					}
+				}
+
+				for (vec::iterator it (v.begin()); it != v.end(); ++it){ //Cycles through the Vector once more to verify that ONLY the Original
+					if(dsname.compare((*it).filename().string()) != 0){ //Savefile is included to prevent copying of random Files
 						it = v.erase(it);
 						it--;
 					}
@@ -298,7 +318,7 @@ void createstorage(path p){
 
 				sort(w.begin(), w.end()); //std::sort, since directory iteration is not ordered on some file systems
 
-				for (vec::iterator it2 (w.begin()); it2 != w.end(); ++it2){ //Iteration cycles through Vector V
+				for (vec::iterator it2 (w.begin()); it2 != w.end(); ++it2){ //Iteration cycles through Vector W
 					if (is_directory(*it2)){
 						it2 = w.erase(it2);
 						it2--;
