@@ -14,28 +14,22 @@
 #include <boost/thread/thread.hpp>
 #include <boost/predef.h>
 
-using namespace std;
-using namespace boost::filesystem;
-using namespace boost::posix_time;
-using namespace boost;
-
-
-boost::filesystem::path OriginalPath = current_path(); //Gets The Current Path, which contains the Program
+boost::filesystem::path OriginalPath = boost::filesystem::current_path(); //Gets The Current Path, which contains the Program
 boost::filesystem::path FinalPath; //Path where the Savefile should be
 boost::filesystem::path MainDir; //Path where all Saves are Stored aka DarkSoulsAutoSave
 boost::filesystem::path Year; // DarkSoulsAutoSave\\2016
 boost::filesystem::path Month; // DarkSoulsAutoSave\\2016\\May
 
-string year;
-string month;
-string timestamp;
-string dsname = "DRAKS0005.sl2";
+std::string year;
+std::string month;
+std::string timestamp;
+std::string dsname = "DRAKS0005.sl2";
 
 int mint; //Minutes to compare
 int premint; //Minutes to compare
 int maxlimit = 0; //Variable to prevent Infinite Loop, Max Value = 100
 
-typedef vector<boost::filesystem::path> vec; // store paths, so we can store and sort them later
+typedef std::vector<boost::filesystem::path> vec; // store paths, so we can store and sort them later
 vec v; //Vector for Source-File
 vec w; //Vector for Destination-Directory and Sorting
 
@@ -44,90 +38,90 @@ vec w; //Vector for Destination-Directory and Sorting
 void getDir(boost::filesystem::path p){ //Basically trying to find out where to search for the Saves
 	boost::filesystem::path temp = p; //PreVariable to Cycle Back the Path
 	boost::filesystem::path pretemp; //PrePreVariable to Cycle Back the Path, should contain the User Folder
-	string stemp = temp.filename().string(); //Casting Path to String for Comparison
-	string docs = "Users"; //String
-	cout << "docs equals: " << docs << endl << endl; //Optional
-	cout << "stemp equals: " << stemp << endl << endl; //Optional
-	cout << "temp equals: " << temp.string() << endl << endl; //Optional
+	std::string stemp = temp.filename().string(); //Casting Path to String for Comparison
+	std::string docs = "Users"; //String
+	std::cout << "docs equals: " << docs << std::endl << std::endl; //Optional
+	std::cout << "stemp equals: " << stemp << std::endl << std::endl; //Optional
+	std::cout << "temp equals: " << temp.string() << std::endl << std::endl; //Optional
 	while(stemp.compare(docs) != 0){ //Reverse Clycling through Path
 		pretemp = temp; //Assignment of Paths
-		cout << "pretemp equals: " << pretemp.string() << endl << endl; //Optional
+		std::cout << "pretemp equals: " << pretemp.string() << std::endl << std::endl; //Optional
 		temp = temp.parent_path(); //Going up one Level in Path
-		cout << "temp equals: " << temp.string() << endl << endl; //Optional
+		std::cout << "temp equals: " << temp.string() << std::endl << std::endl; //Optional
 		stemp = temp.filename().string(); //Casting Path to String for Comparison - Recast
-		cout << "stemp equals: " << stemp << endl << endl; //Optional
+		std::cout << "stemp equals: " << stemp << std::endl << std::endl; //Optional
 	}
-	cout << "It's done! " << endl << endl; //Optional
-	string constructpath = pretemp.string(); //Combined with suffix to create FinalPath
-	cout << "pretemp finished equals: " << pretemp.string() << endl << endl; //Optional
-	string suffix = "\\Documents\\NBGI\\DarkSouls\\"; //Path to DS Savefile
-	string Conv(constructpath + suffix); //Converted String Equals renamed Folders
+	std::cout << "It's done! " << std::endl << std::endl; //Optional
+	std::string constructpath = pretemp.string(); //Combined with suffix to create FinalPath
+	std::cout << "pretemp finished equals: " << pretemp.string() << std::endl << std::endl; //Optional
+	std::string suffix = "\\Documents\\NBGI\\DarkSouls\\"; //Path to DS Savefile
+	std::string Conv(constructpath + suffix); //Converted String Equals renamed Folders
  	FinalPath = Conv; // Cast String to Path
-	cout << FinalPath.string() << " is the estimated Name of the Directory!" << endl << endl; //Optional
+	std::cout << FinalPath.string() << " is the estimated Name of the Directory!" << std::endl << std::endl; //Optional
 }
 
 void makemain(){ //Creating The MainDirectory
-	string PreMain(FinalPath.string() + "DarkSoulsAutoSave\\");
+	std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave\\");
 	MainDir = PreMain;
 	if (create_directory(MainDir)) { //Checks if creation of Directories Succeeds
-		cout << "Success creating Directory called " << MainDir << endl; //Outputs Success Message
+		std::cout << "Success creating Directory called " << MainDir << std::endl; //Outputs Success Message
 	}
 }
 
 void gettime(){
-stringstream ss; //Timestamp
-stringstream ss1; //Year
-stringstream ss2; //Month
-stringstream maxi; //Path Year
-stringstream mini; //Path Month
-ss.str(string()); //Clears the Stringstream
-ss1.str(string()); //Clears the Stringstream
-ss2.str(string()); //Clears the Stringstream
-maxi.str(string()); //Clears the Stringstream
-mini.str(string()); //Clears the Stringstream
+std::stringstream ss; //Timestamp
+std::stringstream ss1; //Year
+std::stringstream ss2; //Month
+std::stringstream maxi; //Path Year
+std::stringstream mini; //Path Month
+ss.str(std::string()); //Clears the Stringstream
+ss1.str(std::string()); //Clears the Stringstream
+ss2.str(std::string()); //Clears the Stringstream
+maxi.str(std::string()); //Clears the Stringstream
+mini.str(std::string()); //Clears the Stringstream
 
-time_facet *facet = new time_facet("%d_%b_%Y %H-%M-%S"); //Creates a Timefacet with the Pattern "Day_Mon_Year Hour-Minutes-Seconds" 
-ss.imbue(locale(ss.getloc(), facet)); //Maps the Facet onto the Stringstream to match the Pattern
-ss << second_clock::local_time(); //Gets the Time and assigns it to the Stringstream
+boost::posix_time::time_facet *facet = new boost::posix_time::time_facet("%d_%b_%Y %H-%M-%S"); //Creates a Timefacet with the Pattern "Day_Mon_Year Hour-Minutes-Seconds" 
+ss.imbue(std::locale(ss.getloc(), facet)); //Maps the Facet onto the Stringstream to match the Pattern
+ss << boost::posix_time::second_clock::local_time(); //Gets the Time and assigns it to the Stringstream
 timestamp = ss.str(); //Casts Stringstream to String
-ss.str(string()); //Clears the Stringstream
+ss.str(std::string()); //Clears the Stringstream
 
-time_facet *facetyear = new time_facet("%Y"); //Creates a Timefacet with the Pattern "Year"
-ss1.imbue(locale(ss1.getloc(), facetyear)); //Maps the Facet onto the Stringstream to match the Pattern
-ss1 << second_clock::local_time(); //Gets the Time and assigns it to the Stringstream
+boost::posix_time::time_facet *facetyear = new boost::posix_time::time_facet("%Y"); //Creates a Timefacet with the Pattern "Year"
+ss1.imbue(std::locale(ss1.getloc(), facetyear)); //Maps the Facet onto the Stringstream to match the Pattern
+ss1 << boost::posix_time::second_clock::local_time(); //Gets the Time and assigns it to the Stringstream
 year = ss1.str(); //Casts Stringstream to String
-ss1.str(string()); //Clears the Stringstream
+ss1.str(std::string()); //Clears the Stringstream
 
-time_facet *facetmonth = new time_facet("%B");//Creates a Timefacet with the Pattern "Month"
-ss2.imbue(locale(ss2.getloc(), facetmonth)); //Maps the Facet onto the Stringstream to match the Pattern
-ss2 << second_clock::local_time(); //Gets the Time and assigns it to the Stringstream
+boost::posix_time::time_facet *facetmonth = new boost::posix_time::time_facet("%B");//Creates a Timefacet with the Pattern "Month"
+ss2.imbue(std::locale(ss2.getloc(), facetmonth)); //Maps the Facet onto the Stringstream to match the Pattern
+ss2 << boost::posix_time::second_clock::local_time(); //Gets the Time and assigns it to the Stringstream
 month = ss2.str(); //Casts Stringstream to String
-ss2.str(string()); //Clears the Stringstream
+ss2.str(std::string()); //Clears the Stringstream
 
-cout << "Year: " << year << " Month: " << month << endl; //Optional
+std::cout << "Year: " << year << " Month: " << month << std::endl; //Optional
 
 maxi << MainDir.string() << year << "\\"; //Adds Year to MainDir Path
 Year = maxi.str();
-maxi.str(string()); //Clears the Stringstream
+maxi.str(std::string()); //Clears the Stringstream
 mini << Year.string() << month << "\\"; //Adds Month to Year Path
 Month = mini.str();
-mini.str(string()); //Clears the Stringstream
+mini.str(std::string()); //Clears the Stringstream
 
-cout << "Year equals: " << Year.string() << endl << endl; //Optional
-cout << "Month equals: " << Month.string() << endl << endl; //Optional
+std::cout << "Year equals: " << Year.string() << std::endl << std::endl; //Optional
+std::cout << "Month equals: " << Month.string() << std::endl << std::endl; //Optional
 
 }
 
 void showvecs(){ //Optional
-	cout << "<-----------------------V-------------------------------->" << endl << endl;
+	std::cout << "<-----------------------V-------------------------------->" << std::endl << std::endl;
 	for (vec::iterator it (v.begin()); it != v.end(); ++it){ //Iteration cycles through Vector V
-		cout << (*it).filename() << " was the latest added Directory!" << endl << endl;
+		std::cout << (*it).filename() << " was the latest added Directory!" << std::endl << std::endl;
 	}
-	cout << "<------------------------W------------------------------->" << endl << endl;
+	std::cout << "<------------------------W------------------------------->" << std::endl << std::endl;
 	for (vec::iterator it2 (w.begin()); it2 != w.end(); ++it2){ //Iteration cycles through Vector W
-		cout << (*it2).filename() << " was the latest added Directory!" << endl << endl;
+		std::cout << (*it2).filename() << " was the latest added Directory!" << std::endl << std::endl;
 	}
-	cout << "<------------------------X------------------------------->" << endl << endl;
+	std::cout << "<------------------------X------------------------------->" << std::endl << std::endl;
 }
 
 //................................................................................................\\
@@ -142,44 +136,44 @@ void clearvecs(){ //Clears the Vectors to prevent File Duplications, or whatever
 
 void hitandrun(){
 
-	cout << "It has begun!" << endl << endl;
+	std::cout << "It has begun!" << std::endl << std::endl;
 
 	for (vec::iterator it (v.begin()); it != v.end(); ++it){		
 
 		boost::filesystem::path Sourcefile = (*it);
-		stringstream ss3;
-		ss3.str(string());
+		std::stringstream ss3;
+		ss3.str(std::string());
 		ss3 << Month.string() << Sourcefile.filename().string();
 		boost::filesystem::path Destinationfile = ss3.str();
-		cout << Destinationfile << endl; //Optional
+		std::cout << Destinationfile << std::endl; //Optional
 		copy_file(Sourcefile, Destinationfile);
-		cout << "Finished Copy Process!" << endl; //Optional
+		std::cout << "Finished Copy Process!" << std::endl; //Optional
 
-		stringstream renamed;
+		std::stringstream renamed;
 		renamed << Destinationfile.string();
-		cout << renamed.str() << endl << endl;
+		std::cout << renamed.str() << std::endl << std::endl;
 		size_t found = renamed.str().find_last_of(".");
-		cout << "Found equals: " << found << endl << endl;
-		stringstream pre;
+		std::cout << "Found equals: " << found << std::endl << std::endl;
+		std::stringstream pre;
 		pre << renamed.str().substr(0, found) << " - " << timestamp << renamed.str().substr(found);
 
 		boost::filesystem::path Renomnom = pre.str();
-		cout << Renomnom.string() << endl << endl;
+		std::cout << Renomnom.string() << std::endl << std::endl;
 		rename(Destinationfile, Renomnom);
 	}
 
-	cout << "Outside Loop!" << endl; //Optional
+	std::cout << "Outside Loop!" << std::endl; //Optional
 
 	w.erase(w.begin(), w.end());
 }
 
 void timegate(){// gets the minutes and uses them for comparison to sync the saves in a X minute cycle
 	std::stringstream minutes;
-	time_facet *facetminutes = new time_facet("%M");
-	minutes.imbue(locale(minutes.getloc(), facetminutes));
-	minutes << second_clock::local_time();
+	boost::posix_time::time_facet *facetminutes = new boost::posix_time::time_facet("%M");
+	minutes.imbue(std::locale(minutes.getloc(), facetminutes));
+	minutes << boost::posix_time::second_clock::local_time();
 	mint = atoi(minutes.str().c_str());
-	minutes.str(string()); //Clears the Stringstream
+	minutes.str(std::string()); //Clears the Stringstream
 
 }
 
@@ -191,13 +185,13 @@ void createstorage(boost::filesystem::path p);
 int main(){
 
 	if(BOOST_OS_WINDOWS){
-        cout << "Windows" << endl;
+        std::cout << "Windows" << std::endl;
 	}
     else if(BOOST_OS_LINUX){
-        cout << "Linux" << endl;
+        std::cout << "Linux" << std::endl;
     }
     else{
-        cout << "Other" << endl;
+        std::cout << "Other" << std::endl;
     }
 
     clearvecs();
@@ -228,7 +222,7 @@ int main(){
 			hitandrun();
 			maxlimit++;
 		}
-		boost::this_thread::sleep(seconds(10));
+		boost::this_thread::sleep(boost::posix_time::seconds(10));
 	}
 
 
@@ -250,12 +244,12 @@ void checkexist(boost::filesystem::path p){
 	try{
 		if (exists(p)) {  // does p actually exist?
 			if (is_regular_file(p)){  // is p a regular file?
-        cout << p << " size is " << file_size(p) << endl; //if it is output the filesize
+        std::cout << p << " size is " << file_size(p) << std::endl; //if it is output the filesize
 			}
 			else if (is_directory(p)){      // is p a directory?
-				cout << p << " is a directory containing:" << endl;
+				std::cout << p << " is a directory containing:" << std::endl;
 
-				copy(directory_iterator(p), directory_iterator(), back_inserter(v)); //std::copy (inputfirst, inputlast, output)
+				copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v)); //std::copy (inputfirst, inputlast, output)
 
 				sort(v.begin(), v.end()); //std::sort, since directory iteration is not ordered on some file systems
 
@@ -274,19 +268,19 @@ void checkexist(boost::filesystem::path p){
 				}
 
 				for (vec::iterator it (v.begin()); it != v.end(); ++it){ //Iteration cycles through Vector V
-					cout << (*it).filename() << " was the latest added File!" << endl << endl;
+					std::cout << (*it).filename() << " was the latest added File!" << std::endl << std::endl;
 				}
 			}
 			else{
-				cout << p << " exists, but is neither a regular file nor a directory\n";
+				std::cout << p << " exists, but is neither a regular file nor a directory\n";
 			}
 		}
 		else{
-			cout << p << " does not exist" << std::endl;
+			std::cout << p << " does not exist" << std::endl;
 		}
 	}
-	catch (const filesystem_error& ex){
-		cout << ex.what() << endl;
+	catch (const boost::filesystem::filesystem_error& ex){
+		std::cout << ex.what() << std::endl;
 	}
 }
 
@@ -294,12 +288,12 @@ void createstorage(boost::filesystem::path p){
 	try{
 		if (exists(p)) {  // does p actually exist?
 			if (is_regular_file(p)){  // is p a regular file?
-        cout << p << " size is " << file_size(p) << endl; //if it is output the filesize
+        std::cout << p << " size is " << file_size(p) << std::endl; //if it is output the filesize
 			}
 			else if (is_directory(p)){      // is p a directory?
-				cout << p << " is a directory containing:" << endl;
+				std::cout << p << " is a directory containing:" << std::endl;
 
-				copy(directory_iterator(p), directory_iterator(), back_inserter(w)); //std::copy (inputfirst, inputlast, output)
+				copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(w)); //std::copy (inputfirst, inputlast, output)
 
 				sort(w.begin(), w.end()); //std::sort, since directory iteration is not ordered on some file systems
 
@@ -310,21 +304,21 @@ void createstorage(boost::filesystem::path p){
 					}
 				}
 				for (vec::iterator it2 (w.begin()); it2 != w.end(); ++it2){ //Iteration cycles through Vector W
-					cout << (*it2).filename() << " was the latest added File!" << endl << endl;
+					std::cout << (*it2).filename() << " was the latest added File!" << std::endl << std::endl;
 				}
 			}
 			else{
-				cout << p << " exists, but is neither a regular file nor a directory" << std::endl;
+				std::cout << p << " exists, but is neither a regular file nor a directory" << std::endl;
 			}
 		}
 		else{
 			if (create_directory(p)) { //Checks if creation of Directories Succeeds
-				cout << "Success creating Directory called " << p << endl; //Outputs Success Message
+				std::cout << "Success creating Directory called " << p << std::endl; //Outputs Success Message
 			}
 		}
 	}
-	catch (const filesystem_error& ex){
-		cout << ex.what() << endl;
+	catch (const boost::filesystem::filesystem_error& ex){
+		std::cout << ex.what() << std::endl;
 	}
 }
 /*-----------------------------------------------SYMLINK-MAGIC-------------------------------------//
@@ -332,22 +326,22 @@ void symlinking(boost::filesystem::path sym){
 	try{
 		if (exists(sym)) {  // does sym actually exist?
 			if (is_regular_file(sym)){  // is sym a regular file?
-        		cout << sym << " size is " << file_size(sym) << endl; //if it is output the filesize
+        		std::cout << sym << " size is " << file_size(sym) << std::endl; //if it is output the filesize
 			}
 			else if (is_symlink(sym)){      // is sym a directory?
-				cout << sym << " is a Symlink !" << endl;
+				std::cout << sym << " is a Symlink !" << std::endl;
 
 			}
 			else{
-				cout << sym << " exists, but is neither a regular file nor a directory" << std::endl;
+				std::cout << sym << " exists, but is neither a regular file nor a directory" << std::endl;
 			}
 		}
 		else{
-			cout << p << " does not exist" << std::endl;
+			std::cout << p << " does not exist" << std::endl;
 		}
 	}
-	catch (const filesystem_error& ex){
-		cout << ex.what() << endl;
+	catch (const boost::filesystem::filesystem_error& ex){
+		std::cout << ex.what() << std::endl;
 	}
 }
 --------------------------------------------------------------------------------------------------*///
