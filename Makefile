@@ -4,7 +4,7 @@ OBJS = dsas.cpp
 CC = g++ 
 #COMPILER_FLAGS specifies the additional compilation options we're using 
 # -w suppresses all warnings 
-COMPILER_FLAGS = -w -std=c++0x
+COMPILER_FLAGS = -w -std=c++11
 #LINKER_FLAGS specifies the libraries we're linking against 
 LINKER_FLAGS = -lboost_system -lboost_regex -lboost_filesystem -lpthread -lboost_date_time -lboost_thread
 #OBJ_NAME specifies the name of our exectuable 

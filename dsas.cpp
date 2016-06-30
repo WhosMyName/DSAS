@@ -7,6 +7,7 @@
 #include <sstream>
 #include <vector>
 #include <iterator>
+#include <thread>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -27,7 +28,7 @@ std::string dsname = "DRAKS0005.sl2";
 
 int mint; //Minutes to compare
 int premint; //Minutes to compare
-int maxlimit = 0; //Variable to prevent Infinite Loop, Max Value = 100
+bool thread_running = false;
 
 typedef std::vector<boost::filesystem::path> vec; // store paths, so we can store and sort them later
 vec v; //Vector for Source-File
@@ -134,7 +135,7 @@ void clearvecs(){ //Clears the Vectors to prevent File Duplications, or whatever
 
 //................................................................................................\\
 
-void hitandrun(){
+void hitandrun(){ //Thats the actual Save-Function
 
 	std::cout << "It has begun!" << std::endl << std::endl;
 
@@ -177,6 +178,12 @@ void timegate(){// gets the minutes and uses them for comparison to sync the sav
 
 }
 
+void threadnochill(){
+	thread_running = true;
+	std::cin.ignore();
+	thread_running = false;
+}
+
 void checkexist(boost::filesystem::path p);
 
 void createstorage(boost::filesystem::path p);
@@ -206,9 +213,10 @@ int main(){
 	createstorage(Month);
 	showvecs();
 	hitandrun();
-	maxlimit++;
+	std::thread thread(threadnochill);// Creates Thread (C++11) and calls treadnochill
+	boost::this_thread::sleep(boost::posix_time::seconds(1));
 
-	while(maxlimit <= 100){ //Starts a 3 Variables Swap with Time Comparison and Management
+	while(thread_running){ //Starts a 3 Variables Swap with Time Comparison and Management
 		timegate();
 		if(premint + 10 >= 60){
 			premint = premint - 50;
@@ -220,17 +228,21 @@ int main(){
 			createstorage(Year);
 			createstorage(Month);
 			hitandrun();
-			maxlimit++;
+			std::cout << "Hit Enter to exit DSAS..." << std::endl;
 		}
-		boost::this_thread::sleep(boost::posix_time::seconds(10));
+		boost::this_thread::sleep(boost::posix_time::seconds(10)); //Lets The Process sleep to reduce CPU Load
 	}
 
+	std::cout << "Saving before Exiting!" << std::endl;
+	gettime();
+	createstorage(Year);
+	createstorage(Month);
+	hitandrun();
+	std::cout << "Exiting!" << std::endl;
 
+	thread.join();
 	return 0;
 
-	//Reduce Amount of Namespaces and use Scopes ::
-	//Comment better and more
-	//Add Multi-Threading for User-based Exiting
 	//Create optimized Copys for DSII and DS3 - GG
 
 
@@ -272,7 +284,7 @@ void checkexist(boost::filesystem::path p){
 				}
 			}
 			else{
-				std::cout << p << " exists, but is neither a regular file nor a directory\n";
+				std::cout << p << " exists, but is neither a regular file nor a directory" << std::endl;
 			}
 		}
 		else{
@@ -321,6 +333,34 @@ void createstorage(boost::filesystem::path p){
 		std::cout << ex.what() << std::endl;
 	}
 }
+
+/*----------------------------Testing under Linux------------------------------------------------------//
+std::string suffix = "\\Documents\\NBGI\\DarkSouls\\";
+!!!
+std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave\\");
+!!!
+maxi << MainDir.string() << year << "\\"; //Adds Year to MainDir Path
+Year = maxi.str();
+maxi.str(std::string()); //Clears the Stringstream
+mini << Year.string() << month << "\\"; //Adds Month to Year Path
+Month = mini.str();
+mini.str(std::string()); //Clears the Stringstream
+
+to
+
+std::string suffix = "/Documents/NBGI/DarkSouls/";
+!!!
+std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave/");
+!!!
+maxi << MainDir.string() << year << "/"; //Adds Year to MainDir Path
+Year = maxi.str();
+maxi.str(std::string()); //Clears the Stringstream
+mini << Year.string() << month << "/"; //Adds Month to Year Path
+Month = mini.str();
+mini.str(std::string()); //Clears the Stringstream
+---------------------------------------------------------------------------------------------------*///
+
+
 /*-----------------------------------------------SYMLINK-MAGIC-------------------------------------//
 void symlinking(boost::filesystem::path sym){
 	try{
@@ -347,8 +387,6 @@ void symlinking(boost::filesystem::path sym){
 --------------------------------------------------------------------------------------------------*///
 
 /*
-<-------------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------->
-COMMENT DSAS and MC2V!!! Holy.
 <-------------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------->
 Check if CurrentDir is in Roaming
 Yes:Skip
