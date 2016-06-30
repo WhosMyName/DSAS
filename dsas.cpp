@@ -215,6 +215,7 @@ int main(){
 	hitandrun();
 	std::thread thread(threadnochill);// Creates Thread (C++11) and calls treadnochill
 	boost::this_thread::sleep(boost::posix_time::seconds(1));
+	std::cout << "Hit Enter to exit DSAS..." << std::endl;
 
 	while(thread_running){ //Starts a 3 Variables Swap with Time Comparison and Management
 		timegate();
