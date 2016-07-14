@@ -44,3 +44,13 @@ Die
 Beat Dark Souls
 
 Praise the Sun! \\\[T]/
+
+######Great Honor to:
+https://github.com/andakawa for helping me with Multithreading
+*
+bool andakawa_is_awesome = true;
+int awesomnesslvl = 0;
+while (andakawa_is_awesome){
+  std::cout << "AwesomenessLevel is: " << awesomenesslvl << std::endl;
+  awesomenesslvl++;
+}*
