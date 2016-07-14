@@ -64,7 +64,7 @@ void getDir(boost::filesystem::path p){ //Basically trying to find out where to 
 void makemain(){ //Creating The MainDirectory
 	std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave\\");
 	MainDir = PreMain;
-	if (create_directory(MainDir)) { //Checks if creation of Directories Succeeds
+	if (boost::filesystem::create_directory(MainDir)) { //Checks if creation of Directories Succeeds
 		std::cout << "Success creating Directory called " << MainDir << std::endl; //Outputs Success Message
 	}
 }
@@ -147,7 +147,7 @@ void hitandrun(){ //Thats the actual Save-Function
 		ss3 << Month.string() << Sourcefile.filename().string();
 		boost::filesystem::path Destinationfile = ss3.str();
 		std::cout << Destinationfile << std::endl; //Optional
-		copy_file(Sourcefile, Destinationfile);
+		boost::filesystem::copy_file(Sourcefile, Destinationfile);
 		std::cout << "Finished Copy Process!" << std::endl; //Optional
 
 		std::stringstream renamed;
@@ -160,7 +160,7 @@ void hitandrun(){ //Thats the actual Save-Function
 
 		boost::filesystem::path Renomnom = pre.str();
 		std::cout << Renomnom.string() << std::endl << std::endl;
-		rename(Destinationfile, Renomnom);
+		boost::filesystem::rename(Destinationfile, Renomnom);
 	}
 
 	std::cout << "Outside Loop!" << std::endl; //Optional
@@ -255,19 +255,19 @@ int main(){
 
 void checkexist(boost::filesystem::path p){
 	try{
-		if (exists(p)) {  // does p actually exist?
-			if (is_regular_file(p)){  // is p a regular file?
-        std::cout << p << " size is " << file_size(p) << std::endl; //if it is output the filesize
+		if (boost::filesystem::exists(p)) {  // does p actually exist?
+			if (boost::filesystem::is_regular_file(p)){  // is p a regular file?
+        std::cout << p << " size is " << boost::filesystem::file_size(p) << std::endl; //if it is output the filesize
 			}
-			else if (is_directory(p)){      // is p a directory?
+			else if (boost::filesystem::is_directory(p)){      // is p a directory?
 				std::cout << p << " is a directory containing:" << std::endl;
 
-				copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v)); //std::copy (inputfirst, inputlast, output)
+				std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v)); //std::copy (inputfirst, inputlast, output)
 
-				sort(v.begin(), v.end()); //std::sort, since directory iteration is not ordered on some file systems
+				std::sort(v.begin(), v.end()); //std::sort, since directory iteration is not ordered on some file systems
 
 				for (vec::iterator it (v.begin()); it != v.end(); ++it){ //Iteration cycles through Vector V
-					if (is_directory(*it)){
+					if (boost::filesystem::is_directory(*it)){
 						it = v.erase(it);
 						it--;
 					}
@@ -299,19 +299,19 @@ void checkexist(boost::filesystem::path p){
 
 void createstorage(boost::filesystem::path p){
 	try{
-		if (exists(p)) {  // does p actually exist?
-			if (is_regular_file(p)){  // is p a regular file?
-        std::cout << p << " size is " << file_size(p) << std::endl; //if it is output the filesize
+		if (boost::filesystem::exists(p)) {  // does p actually exist?
+			if (boost::filesystem::is_regular_file(p)){  // is p a regular file?
+        std::cout << p << " size is " << boost::filesystem::file_size(p) << std::endl; //if it is output the filesize
 			}
-			else if (is_directory(p)){      // is p a directory?
+			else if (boost::filesystem::is_directory(p)){      // is p a directory?
 				std::cout << p << " is a directory containing:" << std::endl;
 
-				copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(w)); //std::copy (inputfirst, inputlast, output)
+				std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(w)); //std::copy (inputfirst, inputlast, output)
 
-				sort(w.begin(), w.end()); //std::sort, since directory iteration is not ordered on some file systems
+				std::sort(w.begin(), w.end()); //std::sort, since directory iteration is not ordered on some file systems
 
 				for (vec::iterator it2 (w.begin()); it2 != w.end(); ++it2){ //Iteration cycles through Vector W
-					if (is_directory(*it2)){
+					if (boost::filesystem::is_directory(*it2)){
 						it2 = w.erase(it2);
 						it2--;
 					}
@@ -325,7 +325,7 @@ void createstorage(boost::filesystem::path p){
 			}
 		}
 		else{
-			if (create_directory(p)) { //Checks if creation of Directories Succeeds
+			if (boost::filesystem::create_directory(p)) { //Checks if creation of Directories Succeeds
 				std::cout << "Success creating Directory called " << p << std::endl; //Outputs Success Message
 			}
 		}
@@ -365,11 +365,11 @@ mini.str(std::string()); //Clears the Stringstream
 /*-----------------------------------------------SYMLINK-MAGIC-------------------------------------//
 void symlinking(boost::filesystem::path sym){
 	try{
-		if (exists(sym)) {  // does sym actually exist?
-			if (is_regular_file(sym)){  // is sym a regular file?
-        		std::cout << sym << " size is " << file_size(sym) << std::endl; //if it is output the filesize
+		if (boost::filesystem::exists(sym)) {  // does sym actually exist?
+			if (boost::filesystem::is_regular_file(sym)){  // is sym a regular file?
+        		std::cout << sym << " size is " << boost::filesystem::file_size(sym) << std::endl; //if it is output the filesize
 			}
-			else if (is_symlink(sym)){      // is sym a directory?
+			else if (boost::filesystem::is_symlink(sym)){      // is sym a directory?
 				std::cout << sym << " is a Symlink !" << std::endl;
 
 			}

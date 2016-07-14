@@ -15,22 +15,27 @@
 #include <boost/thread/thread.hpp>
 #include <boost/predef.h>
 
-boost::filesystem::path OriginalPath = boost::filesystem::current_path(); //Gets The Current Path, which contains the Program
+boost::filesystem::path CurrentPath = boost::filesystem::current_path(); //Gets The Current Path, which contains the Program
+boost::filesystem::path CallMyName; //Is Path of Executable including it's Name
 boost::filesystem::path Desktop; //Path which leads to Desktop
+boost::filesystem::path DS2; //Path which leads to Roaming\\DarkSouls2
 boost::filesystem::path FinalPath; //Path where the Savefile should be
 boost::filesystem::path MainDir; //Path where all Saves are Stored aka DarkSoulsAutoSave 2 & 3
-boost::filesystem::path Year; // DarkSoulsAutoSave\\2016
-boost::filesystem::path Month; // DarkSoulsAutoSave\\2016\\May
+boost::filesystem::path Year; // DarkSoulsAutoSave2\\2016
+boost::filesystem::path Month; // DarkSoulsAutoSave2\\2016\\May
 
 std::string year;
 std::string month;
 std::string timestamp;
 std::string dsname;
+std::string choices[2] = {"DARKSII0000.sl2", "DS2SOFS0000.sl2"};
 
 int mint; //Minutes to compare
 int premint; //Minutes to compare
+int savenames = 0; //if 1 => DAKRSII0000.sl2, if 2 => DS2SOFS0000.sl2, if 3 => both Savefiles detected ---> ask User
 bool inplace = false;
 bool thread_running = false;
+
 
 typedef std::vector<boost::filesystem::path> vec; // store paths, so we can store and sort them later
 vec v; //Vector for Source-File
@@ -57,17 +62,17 @@ void getDir(boost::filesystem::path p){ //Basically trying to find out where to 
 	std::cout << "pretemp finished equals: " << pretemp.string() << std::endl << std::endl; //Optional
 	std::string suffix = "\\AppData\\Roaming\\DarkSoulsII\\"; //Path to DS Savepath
 	std::string Conv(constructpath + suffix); //Converted String Equals renamed Folders
- 	FinalPath = Conv; // Cast String to Path
+ 	DS2 = Conv; // Cast String to Path
 	std::string suffix2 = "\\Desktop\\"; //Path to Desktop
 	std::string Conv2(constructpath + suffix2); //Combines constructpath and suffix2
 	Desktop = Conv2; //Converts String to Path
-	std::cout << FinalPath.string() << " is the estimated Name of the Directory!" << std::endl << std::endl; //Optional
+	std::cout << DS2.string() << " is the estimated Name of the Directory!" << std::endl << std::endl; //Optional
 }
 
 void makemain(){ //Creating The MainDirectory
-	std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave\\");
+	std::string PreMain(DS2.string() + "DarkSoulsAutoSave2\\");
 	MainDir = PreMain;
-	if (create_directory(MainDir)) { //Checks if creation of Directories Succeeds
+	if (boost::filesystem::create_directory(MainDir)) { //Checks if creation of Directories Succeeds
 		std::cout << "Success creating Directory called " << MainDir << std::endl; //Outputs Success Message
 	}
 }
@@ -150,7 +155,7 @@ void hitandrun(){ //Thats the actual Save-Function
 		ss3 << Month.string() << Sourcefile.filename().string();
 		boost::filesystem::path Destinationfile = ss3.str();
 		std::cout << Destinationfile << std::endl; //Optional
-		copy_file(Sourcefile, Destinationfile);
+		boost::filesystem::copy_file(Sourcefile, Destinationfile);
 		std::cout << "Finished Copy Process!" << std::endl; //Optional
 
 		std::stringstream renamed;
@@ -163,7 +168,7 @@ void hitandrun(){ //Thats the actual Save-Function
 
 		boost::filesystem::path Renomnom = pre.str();
 		std::cout << Renomnom.string() << std::endl << std::endl;
-		rename(Destinationfile, Renomnom);
+		boost::filesystem::rename(Destinationfile, Renomnom);
 	}
 
 	std::cout << "Outside Loop!" << std::endl; //Optional
@@ -191,8 +196,12 @@ void checkexist(boost::filesystem::path p);
 
 void createstorage(boost::filesystem::path p);
 
+void symlinking(boost::filesystem::path sym);
+
+void verifysave(boost::filesystem::path p);
+
 //##################################################################################################################################################################//
-int main(){
+int main(int argc, char** argv){
 
 	/*-------------------------------------!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!---------------------------------->
 	Check if DSASII is inside SteamID Folder
@@ -214,6 +223,13 @@ int main(){
 		set inplace true and re-run;
 		check which save-name exists and set this name to dsname;
 	*/
+	/*-------------------TBI----------------
+		verifysave
+		|-> Loads Contnent of CurrentPath into Vector cleans it and checks for Savefile, sets bool inplace to true --> see int Savenames && checkexist()
+		Symlink Magic
+
+
+	*/
 
 	if(BOOST_OS_WINDOWS){
         std::cout << "Windows" << std::endl;
@@ -224,14 +240,31 @@ int main(){
     else{
         std::cout << "Other" << std::endl;
     }
-
+	CallMyName = boost::filesystem::system_complete(argv[0]);
+	
     clearvecs();
-	getDir(OriginalPath);
-	if(OriginalPath.string().find(FinalPath.string()) == std::string::npos){
-		create_directory_symlink(FinalPath, OriginalPath);
+	getDir(CurrentPath);
+	if(CurrentPath.string().find(DS2.string()) == std::string::npos){
+		boost::filesystem::create_directory_symlink(DS2, Desktop);
+		std::cout << "Notification" << std::endl << "Press Enter to Leave!" << std::endl;
+		std::cin.ignore();
+		return 0;
 	}
-	checkexist(FinalPath);
-	makemain();
+	else{
+		std::stringstream temp1;
+		temp1.str(std::string());
+		temp1 << DS2.string() << "\\" << choices[1];
+		boost::filesystem::path path1 = temp1.str();
+
+		std::stringstream temp2;
+		temp2.str(std::string());
+		temp2 << DS2.string() << "\\" << choices[2];
+		boost::filesystem::path path2 = temp2.str();
+	}
+
+	//checkexist(FinalPath); //Because lies in HUGENUMBERS in
+	//MAINPROCS
+	makemain(); //Should be in DS2\\DarkSoulsAutoSave2
 	checkexist(MainDir);
 	timegate(); //gets current Time-Value Minutes
 	premint = mint; //Inits the Swap Values
@@ -269,7 +302,7 @@ int main(){
 	std::cout << "Exiting!" << std::endl;
 
 	thread.join();
-	return 0;
+	return 0; 
 
 	//Create optimized Copys for DSII and DS3 - GG
 
@@ -277,24 +310,21 @@ int main(){
 }
 //##################################################################################################################################################################//
 
-
-
-
 void checkexist(boost::filesystem::path p){
 	try{
-		if (exists(p)) {  // does p actually exist?
-			if (is_regular_file(p)){  // is p a regular file?
-        std::cout << p << " size is " << file_size(p) << std::endl; //if it is output the filesize
+		if (boost::filesystem::exists(p)) {  // does p actually exist?
+			if (boost::filesystem::is_regular_file(p)){  // is p a regular file?
+        std::cout << p << " size is " << boost::filesystem::file_size(p) << std::endl; //if it is output the filesize
 			}
-			else if (is_directory(p)){      // is p a directory?
+			else if (boost::filesystem::is_directory(p)){      // is p a directory?
 				std::cout << p << " is a directory containing:" << std::endl;
 
-				copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v)); //std::copy (inputfirst, inputlast, output)
+				std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v)); //std::copy (inputfirst, inputlast, output)
 
-				sort(v.begin(), v.end()); //std::sort, since directory iteration is not ordered on some file systems
+				std::sort(v.begin(), v.end()); //std::sort, since directory iteration is not ordered on some file systems
 
 				for (vec::iterator it (v.begin()); it != v.end(); ++it){ //Iteration cycles through Vector V
-					if (is_directory(*it)){
+					if (boost::filesystem::is_directory(*it)){
 						it = v.erase(it);
 						it--;
 					}
@@ -326,19 +356,19 @@ void checkexist(boost::filesystem::path p){
 
 void createstorage(boost::filesystem::path p){
 	try{
-		if (exists(p)) {  // does p actually exist?
-			if (is_regular_file(p)){  // is p a regular file?
-        std::cout << p << " size is " << file_size(p) << std::endl; //if it is output the filesize
+		if (boost::filesystem::exists(p)) {  // does p actually exist?
+			if (boost::filesystem::is_regular_file(p)){  // is p a regular file?
+        std::cout << p << " size is " << boost::filesystem::file_size(p) << std::endl; //if it is output the filesize
 			}
-			else if (is_directory(p)){      // is p a directory?
+			else if (boost::filesystem::is_directory(p)){      // is p a directory?
 				std::cout << p << " is a directory containing:" << std::endl;
 
-				copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(w)); //std::copy (inputfirst, inputlast, output)
+				std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(w)); //std::copy (inputfirst, inputlast, output)
 
-				sort(w.begin(), w.end()); //std::sort, since directory iteration is not ordered on some file systems
+				std::sort(w.begin(), w.end()); //std::sort, since directory iteration is not ordered on some file systems
 
 				for (vec::iterator it2 (w.begin()); it2 != w.end(); ++it2){ //Iteration cycles through Vector W
-					if (is_directory(*it2)){
+					if (boost::filesystem::is_directory(*it2)){
 						it2 = w.erase(it2);
 						it2--;
 					}
@@ -352,7 +382,7 @@ void createstorage(boost::filesystem::path p){
 			}
 		}
 		else{
-			if (create_directory(p)) { //Checks if creation of Directories Succeeds
+			if (boost::filesystem::create_directory(p)) { //Checks if creation of Directories Succeeds
 				std::cout << "Success creating Directory called " << p << std::endl; //Outputs Success Message
 			}
 		}
@@ -363,54 +393,33 @@ void createstorage(boost::filesystem::path p){
 }
 
 //-----------------------------------------------SYMLINK-MAGIC-------------------------------------//
-void symlinking(boost::filesystem::path sym){
+
+void symlinking(boost::filesystem::path sym){ //Trick McMicky Pseudo-Create Symlink, check against Existance of Sym and create if not existing
 	try{
-		if (exists(sym)) {  // does sym actually exist?
-			if (is_symlink(sym)){      // is sym a directory?
+		if (boost::filesystem::exists(sym)) {  // does sym actually exist?
+			if (boost::filesystem::is_symlink(sym)){      // is sym a directory?
 				std::cout << sym << " is a Symlink !" << std::endl;
 			}
-			else if (is_regular_file(sym)){  // is sym a regular file?
-        		std::cout << sym << " size is " << file_size(sym) << std::endl; //if it is output the filesize
+			else if (boost::filesystem::is_regular_file(sym)){  // is sym a regular file?
+        		std::cout << sym << " size is " << boost::filesystem::file_size(sym) << std::endl; //if it is output the filesize
 			}
 			else{
-				std::cout << sym << " exists, but is neither a regular file nor a directory" << std::endl;
+				std::cout << sym << " exists, but is neither a regular Symlink nor a directory" << std::endl;
 			}
 		}
 		else{
-			create_symlink(Desktop, OriginalPath);
-			std::cout << sym << " does not exist" << std::endl;
+			std::cout << sym << " does not exist! Creating new Symlink!" << std::endl;
+			boost::filesystem::create_symlink(CallMyName, Desktop);
 		}
 	}
 	catch (const boost::filesystem::filesystem_error& ex){
 		std::cout << ex.what() << std::endl;
 	}
 }
+
 //--------------------------------------------------------------------------------------------------//
 
+void verifysave(boost::filesystem::path p){
 
+}
 
-/*----------------------------Testing under Linux------------------------------------------------------//
-std::string suffix = "\\Documents\\NBGI\\DarkSouls\\";
-!!!
-std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave\\");
-!!!
-maxi << MainDir.string() << year << "\\"; //Adds Year to MainDir Path
-Year = maxi.str();
-maxi.str(std::string()); //Clears the Stringstream
-mini << Year.string() << month << "\\"; //Adds Month to Year Path
-Month = mini.str();
-mini.str(std::string()); //Clears the Stringstream
-
-to
-
-std::string suffix = "/Documents/NBGI/DarkSouls/";
-!!!
-std::string PreMain(FinalPath.string() + "DarkSoulsAutoSave/");
-!!!
-maxi << MainDir.string() << year << "/"; //Adds Year to MainDir Path
-Year = maxi.str();
-maxi.str(std::string()); //Clears the Stringstream
-mini << Year.string() << month << "/"; //Adds Month to Year Path
-Month = mini.str();
-mini.str(std::string()); //Clears the Stringstream
----------------------------------------------------------------------------------------------------*///
