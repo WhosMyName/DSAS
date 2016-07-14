@@ -34,23 +34,17 @@ TODO:
 
 ~~*Create a "I-am-the-Master-of-Time-DIY"-Version*~~  Nahhh
 
-Die
+#####Great Honor to:
+*https://github.com/andakawa* for helping me with Multithreading
 
-Try again
-
-Die
-
-...
-Beat Dark Souls
-
-Praise the Sun! \\\[T]/
-
-######Great Honor to:
-https://github.com/andakawa for helping me with Multithreading
-*
+```
 bool andakawa_is_awesome = true;
 int awesomnesslvl = 0;
 while (andakawa_is_awesome){
   std::cout << "AwesomenessLevel is: " << awesomenesslvl << std::endl;
   awesomenesslvl++;
-}*
+}
+```
+
+Praise the Sun! \\\[T]/
+
