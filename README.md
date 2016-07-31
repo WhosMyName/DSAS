@@ -1,6 +1,6 @@
 # DarkSoulsAutoSave - DSAS
 
-DarkSoulsAutoSave is a fellow Tool, which automagically Backs-Up your Dark Souls I Save and stores/sorts them.
+DarkSoulsAutoSave is a fellow Tool, which automagically Backs-Up your Dark Souls Saves and stores/sorts them.
 
 It uses a 100 Save-Limit Loop in 10 Minute Cycles, which implies 16.66666666666667 Hours of Fun and Death, and no worries about your Saves.
 
@@ -8,7 +8,7 @@ I actually don't know now big a Savefile can get but from my 2 Chars, a 4 MB Sav
 
 So keep if safe, don't play too long and quit DSAS, to prevent your Harddrive from suffering a horrible Death.
 
-A big shout out to my bois and grills from Microsoft, why am I not able to use colon(:) to properly display the Time inside of the Filename, in the Worlds greatest OS, according to Microsoft. _\*sighs\*_
+A big shout out to my bois and grills from Microsoft, why am I not able to use colon(:) to properly display the Time inside of a Filename, in the Worlds greatest OS, according to Microsoft. _\*sighs\*_
 
 
 DISCLAIMER:
@@ -31,7 +31,7 @@ TODO:
 
 ~~*Compile on Windows*~~  Done
 
-~~*Create a 15 and 20 Minutes Version*~~  Done
+~~*Create a 20 and 30 Minutes Version*~~  Done
 
 #####Great Honor to:
 *https://github.com/andakawa* for helping me with Multithreading
