@@ -21,11 +21,11 @@ Use at your own Risk!
 
 <-------------------------------------------------------------->
 
-####Just download the DSAS Complete Edition.zip, extract it into a subfolder of your "Users"-Folder and you should be good to go! 
+#### Just download the DSAS Complete Edition.zip, extract it into a subfolder of your "Users"-Folder and you should be good to go! 
 
-####DSAS 2 & 3 need to be run with Administrator Privileges, as Microsoft does not allow to create Symbolic Links as non-Admin!
+#### DSAS 2 & 3 need to be run with Administrator Privileges, as Microsoft does not allow to create Symbolic Links as non-Admin!
 
-###Searching for Testers, please leave feedback!
+### Searching for Testers, please leave feedback!
 
 TODO:
 
@@ -33,7 +33,7 @@ TODO:
 
 ~~*Create a 20 and 30 Minutes Version*~~  Done
 
-#####Great Honor to:
+##### Great Honor to:
 *https://github.com/andakawa* for helping me with Multithreading
 
 ```
